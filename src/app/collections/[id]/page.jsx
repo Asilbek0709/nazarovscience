@@ -1,12 +1,9 @@
-"use client"
-
-
-import { useParams } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import ArticleList from "./ArticleList";
 
 const collections = {
-    1: {
+    "1": {
         title: 'Akademik Baxtiyor Nazarovning ilmiy-ijodiy, ijtimoiy va pedagogik faoliyati haqida',
         articles: [
             {id: 1, title: 'Akademik Baxtiyor Nazarov 80 yoshda', file:"/files/1.pdf", author: `İso Habibbayli & Yashar Qosim`, page: `1-11`},
@@ -25,7 +22,7 @@ const collections = {
 
         ]
     },
-    2: {
+    "2": {
         title: `Mumtoz adabiyot, o'zbek adabiyoti, adabiyot nazariyasi masalalari`,
         articles: [
             {id: 1, title: 'АМИР АЛИШЕР НАВОИЙ ВА АДИБ СОБИР ТЕРМИЗИЙ', file:"/files/14.pdf", author: `Эргаш ОЧИЛОВ`, page: `1-11`},
@@ -57,7 +54,7 @@ const collections = {
             {id: 27, title: 'БАДИИЙ МАТННИНГ ЗАМОНАВИЙ ТАЛҚИНИ', file:"/files/106.pdf", author: `Шукурова Барчин`, page: `236-243`},
         ]
     },
-    3: {
+    "3": {
         title: 'Folklorshunoslik masalalari',
         articles: [
             {id: 1, title: 'O‘ZBEK TO‘Y MAROSIM FOLKLORI VA UNING TADQIQI', file:"/files/38.pdf", author: `Kasimova Zuxraxan Fatxiddinovna`, page: `1-12`},
@@ -70,7 +67,7 @@ const collections = {
             {id: 8, title: 'WISE OLD MAN CHARACTERS IN TURKIC EPIC', file:"/files/45.pdf", author: `B.A.Alibabaoglu`, page: `65-73`},
         ]
     },
-    4: {
+    "4": {
         title: 'Ilmiy-adabiy meros va adabiy tanqidchilik tarixi masalalari',
         articles: [
             {id: 1, title: '“DAHSHAT” NI YANGICHA O‘QISH TAJRIBASI1', file:"/files/46.pdf", author: `Mirzayeva Zulxumor Inomovna`, page: `1-9`},
@@ -100,7 +97,7 @@ const collections = {
             
         ]
     },
-    5: {
+    "5": {
         title: 'Tarjima va tarjimashunoslik masalalari',
         articles: [
             {id: 1, title: 'DUNYO TILSHUNOSLIGIDA FAVQULODDA VAZIYATLARNING MAXSUS LEKSIKASINI O‘RGANISHGA YONDASHUVLAR', file:"/files/69.pdf", author: `Badalbayeva Maloxat Yulchiyevna`, page: `1-9`},
@@ -109,7 +106,7 @@ const collections = {
             {id: 4, title: '“BOBURNOMA”DAGI ESKIRGAN SO‘ZLARNI TARJIMA QILISH MUAMMOLARI: QIYOSIY TAHLIL', file:"/files/72.pdf", author: `Xabibullayeva Fazilat Xabibullo qizi`, page: `25-33`},
         ]
     },
-    6: {
+    "6": {
         title: 'Adabiyot ilmida raqamli texnologiyalarning o‘rni va ahamiyati',
         articles: [
             {id: 1, title: 'JURNALISTIK DISKURSIDA YOSHLAR LEKSIKASI: SLENG, NEOLOGIZM VA INTERNET JARGONI', file:"/files/73.pdf", author: `Feruza Yakubova`, page: `1-9`},
@@ -117,7 +114,7 @@ const collections = {
             {id: 3, title: 'THE ROLE OF PHRASES IN ENGLISH AND UZBEK LITERATURE: SIMILARITIES AND DIFFERENCES', file:"/files/75.pdf", author: `Kubaeva Nafisa Alisher qizi`, page: `16-23`},
         ]
     },
-    7: {
+    "7": {
         title: 'Poetik nutq muammolari',
         articles: [
             {id: 1, title: 'FALSAFIY MUSHOHADAKORLIK VA BADIIYAT UYG‘UNLIGI', file:"/files/76.pdf", author: `Rahimova Bekposhsha Bahodirovna`, page: `1-9`},
@@ -129,7 +126,7 @@ const collections = {
 
         ]
     },
-    8: {
+    "8": {
         title: `Adabiy ta'lim rivoji va istiqboli masalalari`,
         articles: [
             {id: 1, title: 'ЮЙ ХУАНИНГ “ЯШАМОҚ” РОМАНИНИНГ ЛЕЙТМОТИВ БАДИИЙ ҒОЯСИ ҲАҚИДА', file:"/files/82.pdf", author: `Қўчқорова Марҳабо Худойбергановна`, page: `1-6`},
@@ -159,38 +156,24 @@ const collections = {
     },
     
 } 
+export const dynamicParams = false;
 
-export default function Collection() {
-    const { id } = useParams();
-    const collection = collections[id];
+export default async function Collection({ params }) {
+    const { id } = await params;
+    const numericId = Number(id);
+  const collection = collections[numericId];
 
-    if (!collection) return <h2>Not found 404</h2>
+  if (!collection) return <h2>Not found 404</h2>;
 
-    return(
+  return (
     <>
-        <Header/>
-        <div className="article-section">
-            <div className="title">
-                <h1>{collection.title}</h1>
-            </div>
-            <ul className='articles' >
-                {collection.articles.map(article => (
-                    <li key={article.id} className='article-card' >
-                        <div className="info">
-                            <p><strong>{article.title}</strong></p>
-                            <p>{article.author}</p>
-                        </div>
-                        <div className="page-and-button">
-                            <p><strong>{article.page}</strong></p>
-                            <a href={article.file} download  ><button className='download'>Yuklash</button></a>
-                            <a href={article.file} target='_blank' rel="noopener noreferrer" ><button className='download' >O`qish</button></a>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        
-        </div>
-        <Footer/>
-   </> 
-   )
+      <Header />
+      <ArticleList collection={collection} />
+      <Footer />
+    </>
+  );
+}
+
+export async function generateStaticParams() {
+  return Object.keys(collections).map(id => ({ id }));
 }
